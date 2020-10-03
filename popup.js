@@ -7,15 +7,24 @@
 // função que clica nos números na DOM
 
 
-function modifyDOM(linha, quantidade) {
+function modifyDOM(linha, quantidade, qtdTeimosa, marcaEspelho) {
 
 	var volante = linha.split(' ');
 	document.getElementById('limparvolante').click();
 
+	if (marcaEspelho == 1) {
+		var esp = document.getElementById('apostaEspelho');
+		esp.click();
+	}
 	// clica no botão aumentarnumero a quantidade de vezes que o usuário selecionou
 	for(var i = 0;i < quantidade; i++){
 		document.getElementById('aumentarnumero').click();
 	}
+
+	// clica no botão aumentarnumero a quantidade de vezes da Teimosinha
+	for(var i = 0;i < qtdTeimosa; i++){
+		document.getElementById('aumentarteimosinha').click();
+	}	
 
 	for(var i = 0;i < volante.length;i++){
 		var v;
@@ -41,9 +50,9 @@ function modifyDOM(linha, quantidade) {
 }
 
 // função para mandar executar no DOM a função marca os números.
-function marcaJogo(linha, quantidade) {
+function marcaJogo(linha, quantidade, qtdTeimosa, marcaEspelho) {
 	chrome.tabs.executeScript({
-		code: "(" + modifyDOM + ")('"+ linha +"','" + quantidade + "' );"
+		code: "(" + modifyDOM + ")('"+ linha +"','" + quantidade + "','" + qtdTeimosa + "','" + marcaEspelho + "' );"
 	}, (results) => {
 		console.log('erro');
 	});
@@ -57,11 +66,14 @@ var button = document.getElementById('mybutton');
 button.onclick = function() {
 	var lines = document.getElementById("listadejogos").value.split('\n');
 	var e = document.getElementById("quantidade");
+	var t = document.getElementById("qtdTeimosinha");
+	var esp = document.getElementById("espelho");
+	var qtdTeimosa = t.options[t.selectedIndex].value;
 	var quantidadeAMarcar = e.options[e.selectedIndex].value;
+	var marcaEspelho = 0;
+	if (esp.checked ) marcaEspelho = 1;
 
 	for(var i = 0;i < lines.length;i++){
-		marcaJogo( lines[i], quantidadeAMarcar  );
+		marcaJogo( lines[i], quantidadeAMarcar, qtdTeimosa, marcaEspelho  );
 	};
 }
-
-
